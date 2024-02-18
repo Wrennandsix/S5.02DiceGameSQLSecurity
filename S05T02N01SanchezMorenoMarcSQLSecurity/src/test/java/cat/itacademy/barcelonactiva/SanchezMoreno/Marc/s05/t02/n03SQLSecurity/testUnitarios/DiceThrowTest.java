@@ -14,13 +14,9 @@ public class DiceThrowTest {
 	void testNewRandomDice() {
 		int id = 1;
 		Game game = new Game(id);
-	
-		assertTrue(
-			    game.getDice1() > 0 &&
-			    game.getDice1() <= 6 &&
-			    game.getDice2() > 0 &&
-			    game.getDice2() <= 6
-			);
-    }
+
+		assertTrue(game.getDice1() > 0 && game.getDice1() <= 6);
+		assertTrue(game.getDice2() > 0 && game.getDice2() <= 6);
+	}
 
 }
