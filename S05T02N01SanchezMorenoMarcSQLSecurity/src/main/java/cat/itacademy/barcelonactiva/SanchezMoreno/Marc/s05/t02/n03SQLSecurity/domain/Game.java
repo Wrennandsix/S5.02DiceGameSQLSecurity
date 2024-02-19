@@ -6,7 +6,7 @@ import java.sql.Timestamp;
 
 import org.hibernate.annotations.CreationTimestamp;
 
-import cat.itacademy.barcelonactiva.SanchezMoreno.Marc.s05.t02.n03SQLSecurity.domain.utils.ResultCalculator;
+import cat.itacademy.barcelonactiva.SanchezMoreno.Marc.s05.t02.n03SQLSecurity.domain.functionalinterfaceç.ResultCalculator;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

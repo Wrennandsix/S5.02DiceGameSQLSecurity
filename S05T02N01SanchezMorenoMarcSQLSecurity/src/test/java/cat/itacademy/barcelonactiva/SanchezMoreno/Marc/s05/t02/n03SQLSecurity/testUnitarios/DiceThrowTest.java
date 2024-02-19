@@ -13,7 +13,7 @@ public class DiceThrowTest {
 	@DisplayName("Test dice throws")
 	void testNewRandomDice() {
 		int id = 1;
-		Game game = new Game(id);
+		Game game = new Game(1);
 
 		assertTrue(game.getDice1() > 0 && game.getDice1() <= 6);
 		assertTrue(game.getDice2() > 0 && game.getDice2() <= 6);

@@ -5,13 +5,10 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-
 import cat.itacademy.barcelonactiva.SanchezMoreno.Marc.s05.t02.n03SQLSecurity.services.JwtServices;
-
 import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.HashMap;
@@ -47,9 +44,11 @@ public class JwtServicesImpl implements JwtServices {
 
 
 
-    @SuppressWarnings("deprecation")
+
+	@SuppressWarnings("deprecation")
 	private String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
-        long expirationTimeInMillis = System.currentTimeMillis() + 1000 * 60 * 24 * 30; 
+        long expirationTimeInMillis = System.currentTimeMillis() + 1000 * 60 * 24 * 30;
+        
         Date expirationDate = new Date(expirationTimeInMillis);
 
         return Jwts.builder()

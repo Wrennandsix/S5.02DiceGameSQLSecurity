@@ -1,8 +1,9 @@
 package cat.itacademy.barcelonactiva.SanchezMoreno.Marc.s05.t02.n03SQLSecurity.dto;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
-
+@Data
 @Setter
 @Getter 
 public class PlayerDTO {
@@ -15,6 +16,11 @@ public class PlayerDTO {
 
 	    this.name = name;
 		this.averageRate = averageRate;
+	}
+
+	public PlayerDTO(String name) {
+		this.name = name;
+	
 	}
 
 }

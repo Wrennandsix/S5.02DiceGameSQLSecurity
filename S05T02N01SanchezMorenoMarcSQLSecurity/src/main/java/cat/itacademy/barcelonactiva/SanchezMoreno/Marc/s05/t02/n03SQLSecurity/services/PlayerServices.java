@@ -27,14 +27,13 @@ public interface PlayerServices {
 	public Player getUser(Integer id);
 	public GameDTO playGame(Integer id);
 	public void deleteAllGames(Integer id);
-	public List<PlayerDTO> getUsersAverageRate();
+	public List<PlayerDTO> getUsersListAverageRate();
 	public PlayerDTO getLoser();
 	public PlayerDTO getWinner();
 	public void recalculateAverage(Integer id);
 	public Player userDTOToUserAnonymus(PlayerDTO userRegisterDTOAnonymus);
 	public List<GameDTO> gameListToGameListDTO(List<Game> games);
 	public GameDTO gameToGameDTO(Game game);
-	public Game gameDTOToEntity(Player player, GameDTO gameDTO);
-	public Player findUser(String username);
+
 	
 }	

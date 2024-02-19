@@ -55,7 +55,7 @@ public class GameController {
 	@GetMapping("")
 	public ResponseEntity<List<PlayerDTO>> getAllAverageRate() {
 
-		List<PlayerDTO> userDTOList = userService.getUsersAverageRate();
+		List<PlayerDTO> userDTOList = userService.getUsersListAverageRate();
 		return new ResponseEntity<>(userDTOList, HttpStatus.OK);
 	}
 

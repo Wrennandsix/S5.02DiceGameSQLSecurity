@@ -3,9 +3,11 @@ package cat.itacademy.barcelonactiva.SanchezMoreno.Marc.s05.t02.n03SQLSecurity.t
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import cat.itacademy.barcelonactiva.SanchezMoreno.Marc.s05.t02.n03SQLSecurity.domain.Game;
 import cat.itacademy.barcelonactiva.SanchezMoreno.Marc.s05.t02.n03SQLSecurity.domain.Player;
+import cat.itacademy.barcelonactiva.SanchezMoreno.Marc.s05.t02.n03SQLSecurity.dto.PlayerDTO;
 import cat.itacademy.barcelonactiva.SanchezMoreno.Marc.s05.t02.n03SQLSecurity.exceptions.GamesNotPlayedException;
 import cat.itacademy.barcelonactiva.SanchezMoreno.Marc.s05.t02.n03SQLSecurity.exceptions.UserNotFoundException;
 import cat.itacademy.barcelonactiva.SanchezMoreno.Marc.s05.t02.n03SQLSecurity.repository.GameRepository;
@@ -28,14 +30,23 @@ public class PlayerServiceImplTests {
 	private PlayerServices playerService = new PlayerServiceImpl(playerRepository);
 
 	private Player player;
+	private Player playerAnonymous;
+	private PlayerDTO playerDTO;
+	private PlayerDTO playerDTONull = null;
+	private Player playerNull = null;
+	private List<Player> players = new ArrayList<Player>();
 	private List<Game> games = new ArrayList<>();
+	private List<Game> gamesEmpty = new ArrayList<>();
 
 	@BeforeEach
 	void setup() {
-
+		playerAnonymous = new Player("");
+		playerAnonymous.setId(2);
+		playerRepository.save(playerAnonymous);
 		player = new Player("Pepe");
 		player.setId(1);
 		playerRepository.save(player);
+		playerDTO = new PlayerDTO("PepeDTO");
 
 		Game game1 = new Game(player, 3, 6);
 		Game game2 = new Game(player, 1, 6);
@@ -61,6 +72,7 @@ public class PlayerServiceImplTests {
 		assertEquals(games, result);
 	}
 
+
 	@Test
 	public void testGetUserGamesThrowsUserNotFoundException() {
 
@@ -70,6 +82,7 @@ public class PlayerServiceImplTests {
 			playerService.getUserGames(player.getId());
 		});
 	}
+
 
 	@Test
 	public void testCalculateAllAverage() {
@@ -83,10 +96,32 @@ public class PlayerServiceImplTests {
 
 	@Test
 	public void testCalculateAllAverageThrowGamesNotPlayedException() {
+		
+		when(gameRepository.findAll()).thenReturn(gamesEmpty);
 
 		assertThrows(GamesNotPlayedException.class, () -> {
 			playerService.calculateAllAverageRate();
 		});
 	}
 
+	  @Test
+	  public void testPlayerToAnonymousPlayer() {
+
+		Player player = playerService.userDTOToUserAnonymus(playerDTO);
+
+		assertEquals("ANONYMOUS", player.getName());
+	}
+	  
+//	  @Test
+//	  public void testPlayerToAnonymousPlayer() {
+//
+//		Player player = playerService.userDTOToUserAnonymus(playerDTO);
+//
+//		assertEquals("ANONYMOUS", player.getName());
+//	}
+//	  
+	  
+
+
 }
+

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import cat.itacademy.barcelonactiva.SanchezMoreno.Marc.s05.t02.n03SQLSecurity.domain.Game;
@@ -36,27 +38,24 @@ public class PlayerServiceImpl implements PlayerServices {
     }
     
 
-	@Override
-	public List<Game> getUserGames(int id) {
-		
-		Optional<Player> user = usersRepo.findById(id);
-		if (user.isEmpty()) {
-			throw new UserNotFoundException();
-		}
+    @Override
+    public List<Game> getUserGames(int id) {
+        Optional<Player> user = usersRepo.findById(id);
+        if (user.isEmpty()) {
+            throw new UserNotFoundException();
+        }
 
-		ArrayList<Game> games = new ArrayList<>();
+        List<Game> games = gameRepo.findAll().stream()
+                .filter(game -> game.getUserId() == id)
+                .collect(Collectors.toList());
 
-		for (int i = 0; i < gameRepo.findAll().size(); i++) {
-			if (gameRepo.findAll().get(i).getUserId() == id) {
-				games.add(gameRepo.findAll().get(i));
-			}
+        if (games.isEmpty()) {
+            throw new GamesNotPlayedException();
+        }
 
-		}
-		if (games.isEmpty()) {
-			throw new GamesNotPlayedException();
-		}
-		return games;
-	}
+        return games;
+    }
+
 
 	@Override
 	public Player findRepeatedUser(String name) {
@@ -79,16 +78,13 @@ public class PlayerServiceImpl implements PlayerServices {
 		    usersRepo.save(registerUserAnonymus);
 		    return;
 		}
-		Player registerUser = userDTOToUser(registerDTO);		
+		Player registerUser = userDTOToUser(registerDTO);
 		Player repeatedUser = findRepeatedUser(registerUser.getName());
-		
-		if (repeatedUser == null) {
-			usersRepo.save(registerUser);
-			return;
-		}
-	
-		if (registerUser.getName().equalsIgnoreCase(repeatedUser.getName())) {
+
+		if (repeatedUser != null && registerUser.getName() != null
+				&& registerUser.getName().equalsIgnoreCase(repeatedUser.getName())) {
 			throw new ExistingNameException();
+
 		} else {
 			usersRepo.save(registerUser);
 		}
@@ -179,22 +175,15 @@ public class PlayerServiceImpl implements PlayerServices {
 	public GameDTO gameToGameDTO(Game game) {
 		return new GameDTO(game.getDice1(), game.getDice2());
 	}
-	   @Override
-	    public Game gameDTOToEntity(Player player, GameDTO gameDTO){
-	        return new Game(player, gameDTO.getDice1(), gameDTO.getDice2());
-	    }
+
 
 	@Override
 	public List<GameDTO> gameListToGameListDTO(List<Game> games) {
-		List<GameDTO> gamesDTO = new ArrayList<GameDTO>();
-
-		for (Game game : games) {
-			gamesDTO.add(gameToGameDTO(game));
-		}
-
-		return gamesDTO;
-
+	    return games.stream()
+	                .map(this::gameToGameDTO)
+	                .collect(Collectors.toList());
 	}
+
 
 	@Override
 	public void updateUser(Integer id, PlayerDTO userDTO) {
@@ -243,31 +232,32 @@ public class PlayerServiceImpl implements PlayerServices {
 		return gameDTO;
 	}
 
-	public void recalculateAverage(Integer id) {
-	 Double newAverage = calculateUserAverageRate(id);  
-	
-	 Player user = getUser(id);
-	 user.setAverageRate(newAverage);	
-     
-     usersRepo.save(user);
-	
-}
-	
 	@Override
-	public void deleteAllGames(Integer id) { 
+	public void recalculateAverage(Integer id) {
 		
-	    List<Game> userGames = getUserGames(id);
-	    
-	    for (Game game : userGames) {
-	        gameRepo.delete(game);
-	    }
-	   Player currentUser = getUser(id);
-	   currentUser.setAverageRate(null);
-	   usersRepo.save(currentUser);
+		Double newAverage = calculateUserAverageRate(id);
+
+		Player user = getUser(id);
+		user.setAverageRate(newAverage);
+
+		usersRepo.save(user);
+
 	}
 
 	@Override
-	public List<PlayerDTO> getUsersAverageRate() {
+	public void deleteAllGames(Integer id) {
+	    List<Game> userGames = getUserGames(id);
+	    
+	    userGames.forEach(gameRepo::delete);
+
+	    Player currentUser = getUser(id);
+	    currentUser.setAverageRate(null);
+	    usersRepo.save(currentUser);
+	}
+
+
+	@Override
+	public List<PlayerDTO> getUsersListAverageRate() {
 		   
 	    List<Player> userList = usersRepo.findAll();
 	    if(userList.isEmpty()) {
@@ -289,7 +279,7 @@ public class PlayerServiceImpl implements PlayerServices {
 	@Override
 	public PlayerDTO getLoser() {
 		
-	    List<PlayerDTO> userDTOList = getUsersAverageRate();
+	    List<PlayerDTO> userDTOList = getUsersListAverageRate();
 	    return userDTOList
 	            .stream()
 	            .filter(u -> u.getAverageRate() != null)
@@ -299,23 +289,12 @@ public class PlayerServiceImpl implements PlayerServices {
 	@Override
 	public PlayerDTO getWinner() {
 		
-	    List<PlayerDTO> userDTOList = getUsersAverageRate();
+	    List<PlayerDTO> userDTOList = getUsersListAverageRate();
 	    return userDTOList
 	            .stream()
 	            .filter(u -> u.getAverageRate() != null)
 	            .max(Comparator.comparing(PlayerDTO::getAverageRate))
 	            .orElseThrow(GamesNotPlayedException::new);
-	}
-	@Override
-	public Player findUser(String username) {
-
-		Player user = null;
-		try {
-			user = usersRepo.findByName(username);
-		} catch (UserNotFoundException e) {
-			System.out.println(e.getMessage());
-		}
-		return user;
 	}
 
 }

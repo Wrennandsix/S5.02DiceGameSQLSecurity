@@ -9,7 +9,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,7 +19,7 @@ import lombok.Setter;
 @Setter
 @Getter
 @Entity
-@Table(name = "players", uniqueConstraints = @UniqueConstraint(columnNames = "name"))
+@Table(name = "players")
 public class Player {
 
 	@Id
@@ -42,6 +41,4 @@ public class Player {
         this.name = name;
         this.averageRate = null;
     }
-
-
 }

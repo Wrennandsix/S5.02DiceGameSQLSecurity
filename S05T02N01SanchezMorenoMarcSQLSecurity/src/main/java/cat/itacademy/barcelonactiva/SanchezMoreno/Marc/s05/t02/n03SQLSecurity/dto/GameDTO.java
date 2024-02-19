@@ -20,7 +20,7 @@ public class GameDTO {
             this.result = "You win!!!";
         }
         else {
-            this.result = "You Lose!!";
+            this.result = "You Lose!!!";
         }
     }
 
