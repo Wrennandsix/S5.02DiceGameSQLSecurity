@@ -41,4 +41,10 @@ public class Player {
         this.name = name;
         this.averageRate = null;
     }
+
+
+	public Player(String name, double averageRate) {
+		this.name = name;
+        this.averageRate = averageRate;
+	}
 }
